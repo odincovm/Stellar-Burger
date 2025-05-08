@@ -36,5 +36,10 @@ export type TUser = {
   email: string;
   name: string;
 };
+export type TRegisterData = {
+  email: string;
+  name: string;
+  password: string;
+};
 
 export type TTabMode = 'bun' | 'sauce' | 'main';

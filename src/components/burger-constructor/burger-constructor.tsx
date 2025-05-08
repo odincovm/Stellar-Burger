@@ -1,36 +1,63 @@
-import { FC, useMemo } from 'react';
-import { TConstructorIngredient } from '@utils-types';
+import React, { FC, useMemo } from 'react';
+import { useSelector, useDispatch } from '../../services/store';
+import type { RootState } from '../../services/store';
+import { useNavigate } from 'react-router-dom';
+import {
+  orderBurger,
+  clearConstructor
+} from '../../services/slices/constructorSlice';
 import { BurgerConstructorUI } from '@ui';
+import type { TConstructorIngredient } from '@utils-types';
 
 export const BurgerConstructor: FC = () => {
-  /** TODO: взять переменные constructorItems, orderRequest и orderModalData из стора */
-  const constructorItems = {
-    bun: {
-      price: 0
-    },
-    ingredients: []
-  };
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const orderRequest = false;
-
-  const orderModalData = null;
-
-  const onOrderClick = () => {
-    if (!constructorItems.bun || orderRequest) return;
-  };
-  const closeOrderModal = () => {};
-
-  const price = useMemo(
-    () =>
-      (constructorItems.bun ? constructorItems.bun.price * 2 : 0) +
-      constructorItems.ingredients.reduce(
-        (s: number, v: TConstructorIngredient) => s + v.price,
-        0
-      ),
-    [constructorItems]
+  // 1) Забираем из стора нужные поля, и дефолты
+  const {
+    items: constructorItems,
+    orderRequest,
+    orderModalData
+  } = useSelector((state: RootState) => {
+    const slice = state.burgerConstructor;
+    return {
+      items: slice?.items ?? { bun: null, ingredients: [] },
+      orderRequest: slice?.orderRequest ?? false,
+      orderModalData: slice?.orderModalData ?? null
+    };
+  });
+  // Берём флаг авторизации, защищаясь от null/undefined
+  const isAuth = Boolean(
+    useSelector((state: RootState) => state.user.user?.email)
   );
 
-  return null;
+  // 2) Обработчик «Оформить заказ»
+  const onOrderClick = () => {
+    // если не авторизованы — редирект на логин
+    if (!isAuth) {
+      navigate('/login', { replace: true });
+      return;
+    }
+
+    const { bun, ingredients } = constructorItems;
+    if (!bun || orderRequest) return;
+
+    const ids = [bun._id, ...ingredients.map((i) => i._id), bun._id];
+    dispatch(orderBurger(ids));
+  };
+
+  // 3) Закрытие модалки
+  const closeOrderModal = () => {
+    dispatch(clearConstructor());
+  };
+
+  // 4) Вычисление цены
+  const price = useMemo(() => {
+    const { bun, ingredients } = constructorItems;
+    const bunTotal = bun ? bun.price * 2 : 0;
+    const ingTotal = ingredients.reduce((sum, i) => sum + i.price, 0);
+    return bunTotal + ingTotal;
+  }, [constructorItems]);
 
   return (
     <BurgerConstructorUI
@@ -43,3 +70,5 @@ export const BurgerConstructor: FC = () => {
     />
   );
 };
+
+export default BurgerConstructor;
