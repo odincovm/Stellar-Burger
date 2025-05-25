@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { FC, memo } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './burger-ingredient.module.css';
@@ -12,10 +13,21 @@ import { TBurgerIngredientUIProps } from './type';
 
 export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
   ({ ingredient, count, handleAdd, locationState }) => {
-    const { image, price, name, _id } = ingredient;
+    const { image, price, name, _id, type } = ingredient;
+
+    // Выбираем data-testid в зависимости от типа
+    const testId =
+      type === 'bun'
+        ? 'ingredient-bun'
+        : type === 'main'
+          ? 'ingredient-main'
+          : undefined;
 
     return (
-      <li className={styles.container}>
+      <li
+        className={styles.container}
+        {...(testId ? { 'data-testid': testId } : {})}
+      >
         <Link
           className={styles.article}
           to={`/ingredients/${_id}`}
@@ -31,7 +43,10 @@ export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
         </Link>
         <AddButton
           text='Добавить'
-          onClick={handleAdd}
+          onClick={() => {
+            console.log('Добавить клик:', ingredient._id);
+            handleAdd();
+          }}
           extraClass={`${styles.addButton} mt-8`}
         />
       </li>

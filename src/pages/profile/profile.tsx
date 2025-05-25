@@ -1,36 +1,49 @@
+import React, { FC, SyntheticEvent, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from '../../services/store';
 import { ProfileUI } from '@ui-pages';
-import { FC, SyntheticEvent, useEffect, useState } from 'react';
+import type { RootState } from '../../services/store';
+import { updateUserThunk } from '../../services/slices/userSlice';
 
 export const Profile: FC = () => {
-  /** TODO: взять переменную из стора */
-  const user = {
-    name: '',
-    email: ''
-  };
+  const dispatch = useDispatch();
 
+  const user = useSelector((state: RootState) => state.user.user);
+
+  if (!user) {
+    return null;
+  }
+
+  // Локальное состояние формы
   const [formValue, setFormValue] = useState({
     name: user.name,
     email: user.email,
-    password: ''
+    password: '' // Изначально пустое значение пароля
   });
 
+  // Синхронизация formValue с user, если user изменился
   useEffect(() => {
-    setFormValue((prevState) => ({
-      ...prevState,
-      name: user?.name || '',
-      email: user?.email || ''
-    }));
+    setFormValue({
+      name: user.name,
+      email: user.email,
+      password: '' // Не заполняем пароль автоматически
+    });
   }, [user]);
 
+  // Проверка, были ли изменения
   const isFormChanged =
-    formValue.name !== user?.name ||
-    formValue.email !== user?.email ||
-    !!formValue.password;
+    formValue.name !== user.name ||
+    formValue.email !== user.email ||
+    formValue.password !== '';
 
+  // Отправка обновлённого профиля
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+    if (isFormChanged) {
+      dispatch(updateUserThunk(formValue));
+    }
   };
 
+  // Сброс изменений
   const handleCancel = (e: SyntheticEvent) => {
     e.preventDefault();
     setFormValue({
@@ -40,11 +53,10 @@ export const Profile: FC = () => {
     });
   };
 
+  // Обработчик ввода
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormValue((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value
-    }));
+    const { name, value } = e.target;
+    setFormValue((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -56,6 +68,6 @@ export const Profile: FC = () => {
       handleInputChange={handleInputChange}
     />
   );
-
-  return null;
 };
+
+export default Profile;
