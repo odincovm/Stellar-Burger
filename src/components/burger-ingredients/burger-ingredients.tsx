@@ -6,7 +6,7 @@ import { BurgerIngredientsUI } from '../ui/burger-ingredients';
 
 export const BurgerIngredients: FC = () => {
   // получаем весь список ингредиентов из стора
-  const ingredients = useSelector((state) => state.ingredients.items);
+  const ingredients = useSelector((state) => state.ingredients.items) || [];
 
   // разбиваем по типам
   const buns = ingredients.filter((item) => item.type === 'bun');

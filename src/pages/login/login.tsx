@@ -1,4 +1,3 @@
-// src/pages/login/login.tsx
 import React, { FC, SyntheticEvent, useState } from 'react';
 import { useDispatch } from '../../services/store';
 import { loginThunk } from '../../services/slices/userSlice';

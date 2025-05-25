@@ -1,7 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { TIngredient } from '@utils-types';
 
-type IngredientsState = {
+const API_URL = process.env.REACT_APP_BURGER_API_URL || '';
+
+export type IngredientsState = {
   items: TIngredient[];
   isLoading: boolean;
   error: string | null;
@@ -18,9 +20,7 @@ const initialState: IngredientsState = {
 export const fetchIngredients = createAsyncThunk(
   'ingredients/fetchIngredients',
   async () => {
-    const res = await fetch(
-      'https://norma.nomoreparties.space/api/ingredients'
-    );
+    const res = await fetch(`${API_URL}/ingredients`);
     const data = await res.json();
     return data.data as TIngredient[];
   }
@@ -47,4 +47,4 @@ const ingredientsSlice = createSlice({
   }
 });
 
-export default ingredientsSlice.reducer;
+export const ingredientsReducer = ingredientsSlice.reducer;

@@ -1,8 +1,8 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import ingredientsReducer from '../slices/ingredientsSlice';
-import constructorReducer from '../slices/constructorSlice';
-import userReducer from '../slices/userSlice';
-import feedReducer from '../slices/feedSlice';
+import { ingredientsReducer } from '../slices/ingredientsSlice';
+import { constructorReducer } from '../slices/constructorSlice';
+import { userReducer } from '../slices/userSlice';
+import { feedReducer } from '../slices/feedSlice';
 
 const rootReducer = combineReducers({
   ingredients: ingredientsReducer,

@@ -9,10 +9,9 @@ export const IngredientsCategory = forwardRef<
   TIngredientsCategoryProps
 >(({ title, titleRef, ingredients }, ref) => {
   // 1) Надёжно вытягиваем items из store, если вдруг state.burgerConstructor или items не инициализированы
-  const constructorItems =
-    useSelector(
-      (state) => state.burgerConstructor?.items
-    ) ?? { bun: null, ingredients: [] };
+  const constructorItems = useSelector(
+    (state) => state.burgerConstructor?.items
+  ) ?? { bun: null, ingredients: [] };
 
   // 2) Считаем счётчики на основании безопасного фоллбэка
   const ingredientsCounters = useMemo(() => {

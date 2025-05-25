@@ -1,10 +1,8 @@
-// src/services/slices/feedSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { TOrder } from '@utils-types';
-import { getOrdersApi } from '../../utils/burger-api';
+import { getOrdersApi } from '../../../utils/burger-api';
 
-// Стейт ленты
-type FeedState = {
+export type FeedState = {
   orders: TOrder[];
   isLoading: boolean;
   error: string | null;
@@ -20,16 +18,14 @@ const initialState: FeedState = {
   totalToday: 0
 };
 
-// Thunk: получаем только массив заказов
 export const fetchFeed = createAsyncThunk<TOrder[], void>(
   'feed/fetchFeed',
   async () => {
-    const orders = await getOrdersApi(); // возвращает TOrder[]
+    const orders = await getOrdersApi();
     return orders;
   }
 );
 
-// Функция для подсчёта количества заказов за сегодня
 const countTodayOrders = (orders: TOrder[]): number => {
   const today = new Date().toDateString();
   return orders.filter(

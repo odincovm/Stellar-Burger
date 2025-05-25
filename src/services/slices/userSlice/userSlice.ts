@@ -1,5 +1,3 @@
-/* eslint-disable prettier/prettier */
-
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   registerUserApi,
@@ -8,13 +6,13 @@ import {
   updateUserApi,
   logoutApi,
   refreshToken
-} from '../../utils/burger-api';
-import { setCookie } from '../../utils/cookie';
+} from '../../../utils/burger-api';
+import { setCookie } from '../../../utils/cookie';
 
 // ← эти типы берем из utils/types
-import { TRegisterData, TUser } from '../../utils/types';
+import { TRegisterData, TUser } from '../../../utils/types';
 // ← а TLoginData приходит из burger‑api
-import { TLoginData } from '../../utils/burger-api';
+import { TLoginData } from '../../../utils/burger-api';
 
 interface UserState {
   user: TUser | null;
@@ -29,7 +27,7 @@ const initialState: UserState = {
   isAuthenticated: false,
   isLoading: false,
   error: null,
-  checked: false,
+  checked: false
 };
 
 // Thunk: регистрация
@@ -98,18 +96,20 @@ export const updateUserThunk = createAsyncThunk<
 });
 
 // Thunk: логаут
-export const logoutThunk = createAsyncThunk<void, void, { rejectValue: string }>(
-  'user/logout',
-  async (_, { rejectWithValue }) => {
-    try {
-      await logoutApi();
-      document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      localStorage.removeItem('refreshToken');
-    } catch (err: any) {
-      return rejectWithValue(err.message || 'Logout failed');
-    }
+export const logoutThunk = createAsyncThunk<
+  void,
+  void,
+  { rejectValue: string }
+>('user/logout', async (_, { rejectWithValue }) => {
+  try {
+    await logoutApi();
+    document.cookie =
+      'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    localStorage.removeItem('refreshToken');
+  } catch (err: any) {
+    return rejectWithValue(err.message || 'Logout failed');
   }
-);
+});
 
 const userSlice = createSlice({
   name: 'user',
@@ -123,7 +123,10 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // регистрация
-      .addCase(registerThunk.pending, (s) => { s.isLoading = true; s.error = null; })
+      .addCase(registerThunk.pending, (s) => {
+        s.isLoading = true;
+        s.error = null;
+      })
       .addCase(registerThunk.fulfilled, (s, a) => {
         s.isLoading = false;
         s.user = a.payload;
@@ -134,7 +137,10 @@ const userSlice = createSlice({
         s.error = a.payload!;
       })
       // логин
-      .addCase(loginThunk.pending, (s) => { s.isLoading = true; s.error = null; })
+      .addCase(loginThunk.pending, (s) => {
+        s.isLoading = true;
+        s.error = null;
+      })
       .addCase(loginThunk.fulfilled, (s, a) => {
         s.isLoading = false;
         s.user = a.payload;
@@ -145,7 +151,9 @@ const userSlice = createSlice({
         s.error = a.payload!;
       })
       // fetch
-      .addCase(fetchUserThunk.pending, (s) => { s.isLoading = true; })
+      .addCase(fetchUserThunk.pending, (s) => {
+        s.isLoading = true;
+      })
       .addCase(fetchUserThunk.fulfilled, (s, a) => {
         s.isLoading = false;
         s.user = a.payload;
@@ -157,7 +165,10 @@ const userSlice = createSlice({
         s.checked = true;
       })
       // update
-      .addCase(updateUserThunk.pending, (s) => { s.isLoading = true; s.error = null; })
+      .addCase(updateUserThunk.pending, (s) => {
+        s.isLoading = true;
+        s.error = null;
+      })
       .addCase(updateUserThunk.fulfilled, (s, a) => {
         s.isLoading = false;
         s.user = a.payload;

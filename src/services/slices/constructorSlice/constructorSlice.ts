@@ -1,7 +1,5 @@
-// src/services/slices/constructorSlice.ts
-
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { orderBurgerApi } from '../../utils/burger-api';
+import { orderBurgerApi } from '../../../utils/burger-api';
 import { TOrder, TIngredient } from '@utils-types';
 
 type TConstructorItem = {
@@ -31,7 +29,7 @@ export const orderBurger = createAsyncThunk<TOrder, string[]>(
   }
 );
 
-const constructorSlice = createSlice({
+export const constructorSlice = createSlice({
   name: 'burgerConstructor',
   initialState,
   reducers: {
@@ -94,3 +92,4 @@ export const {
 } = constructorSlice.actions;
 
 export default constructorSlice.reducer;
+export type { ConstructorState, TConstructorItem };
